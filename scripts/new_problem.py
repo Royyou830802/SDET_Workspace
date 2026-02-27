@@ -80,8 +80,12 @@ def main() -> int:
 
     dest_dir.mkdir(parents=True, exist_ok=True)
 
-    for name in ("solution.py", "test_solution.py", "README.md"):
-        shutil.copy2(template_dir / name, dest_dir / name)
+    for src_name, dst_name in [
+        ("solution.py", "solution.py"),
+        ("test_solution.py", f"test_{slug}.py"),
+        ("README.md", "README.md"),
+    ]:
+        shutil.copy2(template_dir / src_name, dest_dir / dst_name)
 
     _update_readme(dest_dir / "README.md", args.title, args.link, difficulty)
 
