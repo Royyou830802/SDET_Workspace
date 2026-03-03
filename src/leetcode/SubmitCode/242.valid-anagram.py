@@ -1,3 +1,10 @@
+#
+# @lc app=leetcode id=242 lang=python3
+#
+# [242] Valid Anagram
+#
+
+# @lc code=start
 from collections import Counter
 
 class Solution:
@@ -21,3 +28,6 @@ class Solution:
             return True
         else:
             return False
+        
+# @lc code=end
+

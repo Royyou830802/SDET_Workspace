@@ -44,3 +44,20 @@ The script copies from `_templates/` and automatically renames the test file to 
 
 - Virtual environment at `venv/`
 - Activate: `source venv/Scripts/activate` (bash) or `venv\Scripts\activate.bat` (cmd)
+
+## Workflows
+
+### Accompany Test Case Writing
+
+Trigger phrases: "陪我寫測項", "陪我寫 testcases"
+
+Steps:
+1. Read the problem's `solution.py` and existing `test_*.py` to understand the CheckInput validation logic
+2. Guide the user through four test categories:
+   - Happy Path
+   - Edge Cases
+   - Negative Test (corresponding to CheckInput raise conditions)
+   - Output Validation (verify return value type and content)
+3. After the user finishes describing all test cases, draw a mermaid flowchart LR diagram and update the README.md Test Plan section
+
+Mermaid format reference: `src/leetcode/easy/0026_remove_duplicates_from_sorted_array/README.md`
