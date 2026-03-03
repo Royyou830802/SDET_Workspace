@@ -27,3 +27,25 @@ class TestValidAnagram_HappyPath():
     def test_happy_path(self, solution: Solution, input_s: str, input_t: str, expected_output: bool):
         output = solution.isAnagram(input_s, input_t)
         assert output == expected_output
+
+class TestValidAnagram_EdgeCase():
+    
+    @pytest.mark.parametrize("input_s, input_t, expected_output",[
+        ('aaaaa'*5000 + 'bbbbb'*5000, 'a'*25000 + 'b'*25000, True),
+        ('aaaaabbbbb'*5000, 'cccccddddd'*5000, False),
+        ('s', 's', True),
+        ('s', 't', False),
+        ('s'*50000, 's', False),
+        ('s', 't'*50000, False)
+    ], ids = [
+        "Both the length of s and t are 50000, and is anagram.",
+        "Both the length of s and t are 50000, and is not anagram.",
+        "Both the length of s and t are 1, and s == t.",
+        "Both the length of s and t are 1, and s != t.",
+        "The length of s is 50000, and the length of r is 1.",
+        "The length of s is 1, and the length of r is 50000.",
+    ])
+
+    def test_edge_cases(self, solution: Solution, input_s: str, input_t: str, expected_output: bool):
+        output = solution.isAnagram(input_s, input_t)
+        assert output == expected_output
