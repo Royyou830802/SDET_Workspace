@@ -9,9 +9,12 @@ class Solution:
         elif len(s) < 1 or len(t) < 1:
             raise ValueError("The length of input exceed lower bound 1")
         
-        # Check all the characters in the s / t is lower
-        if s.isupper() or t.isupper():
+        # Check all the letters in the s / t are lowercase
+        if not s.islower() or not t.islower():
             raise TypeError("The input consist of uppercase English letters.")
+        # Check all the letters in the s / t are alphabet
+        if not s.isalpha() or not t.isalpha():
+            raise TypeError("The input consist of non-alpha letters.")
         
     def isAnagram(self, s: str, t: str) -> bool:
         self.CheckInput(s, t)
