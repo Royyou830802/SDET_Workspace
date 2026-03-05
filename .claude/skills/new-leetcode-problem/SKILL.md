@@ -28,7 +28,7 @@ Help the user create a new LeetCode problem folder.
 
 3. Run the following command from the workspace root (activate venv first):
    ```bash
-   source venv/Scripts/activate && python scripts/new_problem.py \
+   source venv/Scripts/activate && python leetcode/scripts/new_problem.py \
      --difficulty {difficulty} \
      --slug {slug} \
      --id {id} \
@@ -37,11 +37,10 @@ Help the user create a new LeetCode problem folder.
    ```
 
 4. Create an empty `__init__.py` in the new problem folder.
-   Also ensure `__init__.py` exists in every parent directory up to (and including) `src/`:
-   - `src/__init__.py`
-   - `src/leetcode/__init__.py`
-   - `src/leetcode/{difficulty}/__init__.py`
-   - `src/leetcode/{difficulty}/{folder}/__init__.py`
+   Also ensure `__init__.py` exists in every parent directory up to (and including) `leetcode/`:
+   - `leetcode/__init__.py`
+   - `leetcode/{difficulty}/__init__.py`
+   - `leetcode/{difficulty}/{folder}/__init__.py`
 
 5. Show the created folder path.
    Suggest next steps: open `solution.py` to start writing the solution, then use `/accompany-testcases` when ready to write test cases.

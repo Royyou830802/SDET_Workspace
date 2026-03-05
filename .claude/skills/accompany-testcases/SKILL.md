@@ -11,7 +11,7 @@ Guide the user through writing test cases for a LeetCode problem. Communicate in
 ### 1. Identify the problem folder
 
 - If `$ARGUMENTS` is not empty, use that as the problem folder path.
-- If empty, ask the user to provide the path (e.g. `src/leetcode/easy/0001_two_sum`).
+- If empty, ask the user to provide the path (e.g. `leetcode/easy/0001_two_sum`).
 
 ### 2. Read existing files
 

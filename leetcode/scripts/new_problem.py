@@ -1,8 +1,8 @@
 ﻿"""Create a new LeetCode problem folder from templates.
 
 Usage:
-  python scripts/new_problem.py --difficulty easy --slug two_sum
-  python scripts/new_problem.py --difficulty medium --slug "longest_substring" --id 3
+  python leetcode/scripts/new_problem.py --difficulty easy --slug two_sum
+  python leetcode/scripts/new_problem.py --difficulty medium --slug "longest_substring" --id 3
 """
 
 from __future__ import annotations
@@ -64,9 +64,9 @@ def main() -> int:
         print("Slug is empty after sanitization.", file=sys.stderr)
         return 2
 
-    repo_root = Path(__file__).resolve().parents[1]
-    template_dir = repo_root / "src" / "leetcode" / "_templates"
-    dest_dir = repo_root / "src" / "leetcode" / difficulty / _folder_name(slug, args.problem_id)
+    repo_root = Path(__file__).resolve().parents[2]
+    template_dir = repo_root / "leetcode" / "_templates"
+    dest_dir = repo_root / "leetcode" / difficulty / _folder_name(slug, args.problem_id)
 
     if not template_dir.exists():
         print(f"Template directory not found: {template_dir}", file=sys.stderr)
