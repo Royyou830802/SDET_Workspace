@@ -1,6 +1,6 @@
 ﻿import pytest
 
-from solution import Solution
+from .solution import Solution
 
 
 @pytest.mark.skip("TODO: add tests")

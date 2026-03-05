@@ -1,4 +1,0 @@
-interface:
-  display_name: "LeetCode Problem Creator"
-  short_description: "Create a new LeetCode problem folder from templates."
-  default_prompt: "Use -problem-creator to add a new LeetCode problem via the workspace script."

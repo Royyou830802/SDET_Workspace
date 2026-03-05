@@ -1,2 +1,2 @@
 [tool.pytest.ini_options]
-addopts = "--ignore=src/leetcode/_templates"
+addopts = "--ignore=src/leetcode/_templates --import-mode=importlib"

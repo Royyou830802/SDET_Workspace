@@ -1,5 +1,5 @@
 import pytest
-from solution import Solution
+from .solution import Solution
 
 # Define the general usage conponents
 @pytest.fixture(scope = 'module')

@@ -9,6 +9,8 @@ venv/
 
 # pytest
 .pytest_cache/
+.coverage
 
 # IDE
 .vscode/
+.coverage
