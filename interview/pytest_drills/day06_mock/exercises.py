@@ -37,7 +37,7 @@ def stream_content(content_id, max_retries=3):
                 return response.json()
         except requests.Timeout:
             if attempt == max_retries - 1:
-                raise
+                raise requests.ConnectionError("Connect 3 times with time out, end of connection")
             continue
     return None
 

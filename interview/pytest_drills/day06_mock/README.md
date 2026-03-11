@@ -869,6 +869,137 @@ def test_magic_methods():
 
 ---
 
+## 實戰踩坑筆記
+
+以下是實際練習時常見的觀念錯誤，整理供複習。
+
+---
+
+### 坑 1：patch 路徑要寫「使用它的地方」，不是「定義它的地方」
+
+```python
+# exercises.py
+import requests
+
+def get_device_info(device_id):
+    response = requests.get(...)  # ← 這裡用的是 exercises 模組裡的 requests
+```
+
+```python
+# ❌ 錯誤：patch 了全域的 requests.get，exercises.py 不受影響
+with patch("requests.get") as mock_get:
+    ...
+
+# ✅ 正確：patch exercises 模組裡的 requests.get
+with patch("interview.pytest_drills.day06_mock.exercises.requests.get") as mock_get:
+    ...
+```
+
+**口訣**：`patch("哪個模組用到它.那個名稱")`
+
+---
+
+### 坑 2：patch 路徑只能用絕對路徑，不支援相對路徑
+
+```python
+# ❌ 不支援，會報錯
+@patch(".exercises.requests.get")
+
+# ✅ 正確，完整絕對路徑
+@patch("interview.pytest_drills.day06_mock.exercises.requests.get")
+```
+
+**技巧**：可以用常數縮短路徑：
+```python
+MODULE = "interview.pytest_drills.day06_mock.exercises"
+
+@patch(f"{MODULE}.requests.get")
+```
+
+---
+
+### 坑 3：`raise` vs `raise SomeException(...)`
+
+```python
+except requests.Timeout:
+    if attempt == max_retries - 1:
+        raise                                    # 重新拋出當前 catch 到的例外（類型不變）
+        raise requests.ConnectionError("...")    # 拋出全新的例外（類型由你指定）
+```
+
+| 寫法 | 行為 |
+|------|------|
+| `raise` | 重新拋出當前 catch 到的例外，類型和訊息都不變 |
+| `raise SomeException("msg")` | 拋出全新的例外，類型和訊息由你決定 |
+
+---
+
+### 坑 4：`pytest.raises` with 區塊內的 assert 不會執行
+
+```python
+# ❌ 錯誤：例外拋出後 with 區塊立刻結束，下面的 assert 永遠不會執行
+with pytest.raises(Exception) as exc_info:
+    some_function()
+    assert exc_info.type == SomeError   # ← 不會執行！假的通過！
+    assert mock.call_count == 3         # ← 不會執行！
+
+# ✅ 正確：assert 要寫在 with 區塊外面
+with pytest.raises(requests.Timeout):
+    some_function()
+
+assert mock.call_count == 3             # ← 這才會真正被驗證
+```
+
+---
+
+### 坑 5：`Mock()` 直接建立 vs `patch()` 替換函數
+
+```python
+# Mock() → 代表「回傳值物件」本身，直接設定屬性
+mock_response = Mock()
+mock_response.status_code = 200
+mock_response.json.return_value = {"status": "ok"}
+
+# patch() → 代表「函數」本身，需要 .return_value 才能存取回傳值
+with patch("...requests.get") as mock_get:
+    mock_get.return_value.status_code = 200
+    mock_get.return_value.json.return_value = {"status": "ok"}
+```
+
+**口訣**：`patch()` 拿到的是函數，`.return_value` 才是函數被呼叫後回傳的物件。
+
+```
+mock_get()              → mock_get.return_value   （呼叫函數，取得回傳值）
+mock_get().json()       → mock_get.return_value.json.return_value
+mock_get().status_code  → mock_get.return_value.status_code   （屬性，不需要 return_value）
+```
+
+---
+
+### 坑 6：`return_value` 和 `side_effect` 是同一層的屬性
+
+兩者都是設定在 **Mock 物件本身**上，控制的是「這個 Mock 被呼叫時的行為」：
+
+```python
+mock_get.return_value = mock_response   # 每次呼叫都回傳同一個值
+mock_get.side_effect  = [r1, r2, r3]   # 每次呼叫依序回傳不同值（覆蓋 return_value）
+```
+
+因此，你可以選擇在**不同層**控制「多次呼叫的不同結果」：
+
+```python
+# 方式 A：在 mock_get 這層控制（每次 requests.get() 回傳不同物件）
+mock_get.side_effect = [mock_response1, mock_response2]
+
+# 方式 B：在 json 這層控制（每次 requests.get() 回傳同一物件，但 json() 結果不同）
+mock_get.return_value = mock_response
+mock_response.json.side_effect = [{"status": "processing"}, {"status": "ready"}]
+```
+
+兩種方式結果等價，差別只在你想在哪一層模擬「變化」。
+
+---
+
 ## 練習題
 
 請參考 `exercises.py` 和 `test_day06_mock.py` 進行練習。
