@@ -166,23 +166,45 @@ def test_wait_for_video_processing_timeout(mock_time):
 # Function: get_channel_list(user_id)
 # ============================================================
 
-def test_get_channel_list_timeout():
+@patch(f"{MODULE}.requests.get")
+def test_get_channel_list_timeout(mock_get):
     """4-1: requests.Timeout → returns {"error": "Request timeout"}"""
-    # TODO
-    pass
+    mock_get.side_effect = requests.Timeout("Timeout mock")
+    user_id = "Test_for_get_channel_list_Timeout"
+    result = get_channel_list(user_id)
+    
+    assert result["error"] == "Request timeout"
+    mock_get.assert_called_once_with(f"https://api.roku.com/users/{user_id}/channels", timeout=10)
 
-
-def test_get_channel_list_connection_error():
+@patch(f"{MODULE}.requests.get")
+def test_get_channel_list_connection_error(mock_get):
     """4-2: requests.ConnectionError → returns {"error": "Connection failed"}"""
-    # TODO
-    pass
+    mock_get.side_effect = requests.ConnectionError("Connection error mock")
+    user_id = "Test_for_get_channel_list_Connection_Error"
+    result = get_channel_list(user_id)
+    
+    assert result["error"] == "Connection failed"
+    mock_get.assert_called_once_with(f"https://api.roku.com/users/{user_id}/channels", timeout=10)
 
-
-def test_get_channel_list_unknown_error():
+@patch(f"{MODULE}.requests.get")
+def test_get_channel_list_unknown_error(mock_get):
     """4-3: Generic Exception → error message contains "Unknown error"."""
-    # TODO
-    pass
-
+    Expect_ErrorMsg = [
+        "Test value error",
+        "Test type error",
+        "Test for unknown error"
+    ]
+    mock_get.side_effect = [
+        ValueError(Expect_ErrorMsg[0]),
+        TypeError(Expect_ErrorMsg[1]),
+        Exception(Expect_ErrorMsg[2])
+    ]
+    user_id = "Test_for_not_varified_error"
+    for idx in range(3):
+        # Ask for 3 times to test 3 different unexpected error
+        result = get_channel_list(user_id)
+        assert result["error"] == f"Unknown error: {Expect_ErrorMsg[idx]}"
+    assert mock_get.call_count == 3   
 
 # ============================================================
 # Exercise 5: Integration Test Scenario
@@ -191,11 +213,38 @@ def test_get_channel_list_unknown_error():
 # Hint: mock both requests.post (called twice) and requests.get (called once)
 # ============================================================
 
-def test_user_watch_flow_success():
+@patch(f"{MODULE}.requests.post")
+@patch(f"{MODULE}.requests.get")
+def test_user_watch_flow_success(mock_get, mock_post):
     """5-1: Full happy path — auth → recommendations → play."""
-    # TODO
-    pass
+    # Define the mock responses for all the 3 function in this user_watch_flow
+    mock_response_auth = Mock()
+    mock_response_recom = Mock()
+    mock_response_play = Mock()
+    ## mock response as auth_result
+    mock_response_auth.json.return_value = {
+        "user_id": "Test_auth_happypath",
+        "success": True # get success result to prevent the error
+    }
+    ## mock response as recommendations
+    mock_response_recom.json.return_value = [{"id": "Test_recom_happypath"}] # A list with [0]["id"]
+    ## mock response as first_content
+    mock_response_play.json.return_value = {"content": "Test_content_name" }
+    mock_post.side_effect = [
+        mock_response_auth, 
+        mock_response_play
+    ]
+    mock_get.return_value = mock_response_recom
+    result = user_watch_flow("testuser", "testpassword")
 
+    assert result["content"] == "Test_content_name"
+    assert mock_post.call_count == 2
+    mock_post.assert_any_call(
+        "https://api.roku.com/auth/login",
+        json={"username": "testuser", "password": "testpassword"}
+    )
+    mock_get.assert_called_once_with("https://api.roku.com/users/Test_auth_happypath/recommendations")
+    mock_post.assert_any_call("https://api.roku.com/play/Test_recom_happypath")
 
 def test_user_watch_flow_auth_failed():
     """5-2: Auth returns success=False → returns error, GET never called."""

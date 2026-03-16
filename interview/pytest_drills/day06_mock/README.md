@@ -1000,6 +1000,39 @@ mock_response.json.side_effect = [{"status": "processing"}, {"status": "ready"}]
 
 ---
 
+### 坑 7：`side_effect` 設定 list 後，Mock 內部會轉成 iterator
+
+當你把 list 設定給 `side_effect` 時，Mock 內部會呼叫 `iter()` 把它轉成 **list_iterator**。每次 mock 被呼叫，Mock 就對這個 iterator 呼叫 `next()` 取下一個值。
+
+```python
+mock_get.side_effect = [ValueError("err1"), TypeError("err2")]
+# Mock 內部：iter([...]) → list_iterator
+
+mock_get()  # → next(iterator) → 拋出 ValueError("err1")
+mock_get()  # → next(iterator) → 拋出 TypeError("err2")
+mock_get()  # → next(iterator) → StopIteration
+```
+
+**因此，設定完之後 `mock_get.side_effect` 是 iterator，不是原本的 list！**
+
+```python
+# ❌ 錯誤：iterator 不支援 [idx] 索引
+assert result["error"] == f"Unknown error: {str(mock_get.side_effect[idx])}"
+# → TypeError: 'list_iterator' object is not subscriptable
+
+# ✅ 正確：把預期訊息在設定 side_effect 之前先存起來
+expected_errors = ["err1", "err2", "err3"]
+mock_get.side_effect = [ValueError(expected_errors[0]), ...]
+
+for msg in expected_errors:
+    result = some_function()
+    assert result["error"] == f"Unknown error: {msg}"
+```
+
+**口訣**：`side_effect` 設完就是 iterator，之後不要再用 `[idx]` 去存取它。
+
+---
+
 ## 練習題
 
 請參考 `exercises.py` 和 `test_day06_mock.py` 進行練習。
