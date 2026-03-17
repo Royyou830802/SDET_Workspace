@@ -246,13 +246,39 @@ def test_user_watch_flow_success(mock_get, mock_post):
     mock_get.assert_called_once_with("https://api.roku.com/users/Test_auth_happypath/recommendations")
     mock_post.assert_any_call("https://api.roku.com/play/Test_recom_happypath")
 
-def test_user_watch_flow_auth_failed():
+@patch(f"{MODULE}.requests.post")
+def test_user_watch_flow_auth_failed(mock_post):
     """5-2: Auth returns success=False → returns error, GET never called."""
-    # TODO
-    pass
+    mock_post.return_value.json.return_value = {"success": False}
+    result = user_watch_flow("testuser", "testpassword")
+    assert result["error"] == "Authentication failed"
+    mock_post.assert_called_once_with(
+        "https://api.roku.com/auth/login",
+        json={"username": "testuser", "password": "testpassword"}
+    )
 
-
-def test_user_watch_flow_no_recommendations():
+@patch(f"{MODULE}.requests.post")
+@patch(f"{MODULE}.requests.get")
+def test_user_watch_flow_no_recommendations(mock_get, mock_post):
     """5-3: Auth succeeds but recommendations list is empty → returns error."""
-    # TODO
-    pass
+    mock_response_auth = Mock()
+    mock_response_recom = Mock()
+    ## mock response as auth_result
+    user_id = "Test_auth_happypath"
+    mock_response_auth.json.return_value = {
+        "user_id": user_id,
+        "success": True # get success result to prevent the error
+    }
+    ## mock response as recommendations
+    mock_response_recom.json.return_value = [] # An empty list
+    mock_post.return_value = mock_response_auth
+    mock_get.return_value = mock_response_recom
+
+    result = user_watch_flow("testuser", "testpassword")
+
+    assert result["error"] == "No recommendations"
+    mock_post.assert_called_once_with(
+        "https://api.roku.com/auth/login",
+        json={"username": "testuser", "password": "testpassword"}
+    )
+    mock_get.assert_called_once_with(f"https://api.roku.com/users/{user_id}/recommendations")

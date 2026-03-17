@@ -53,6 +53,53 @@ class TestBestTimeToBuyAndSellStock_EdgeCases:
         "Test the prices contains all 0: [10000]*5 -> Profit = 0.",
     ])
 
-    def test_happy_path(self, solution: Solution, input_prices: list[int], expected_profit: int):
+    def test_edge_case(self, solution: Solution, input_prices: list[int], expected_profit: int):
         profit = solution.maxProfit(input_prices)
         assert profit == expected_profit
+
+class TestBestTimeToBuyAndSellStock_NegitiveCases:
+
+    @pytest.mark.parametrize("input_prices, expect_ErrorType, expect_ErrorMsg", [
+        ("not a list", TypeError, "not a list"),
+        (None, TypeError, "not a list"),
+        ([1] * 100001, ValueError, "length is too long"),
+        ([1, 2, 3.5, 4, 5], TypeError, "non-integer value"),
+        ([1, 2, 'three', 4, 5], TypeError, "non-integer value"),
+        ([1, 2, '@', 4, 5], TypeError, "non-integer value"),
+        ([1, 2, 10001, 4, 5], ValueError, "exceed upper bound"),
+        ([1, 2 , -5, 4, 5], ValueError, "exceed lower bound")
+    ], ids = [
+        "Test when input is a string",
+        "Test when input is None",
+        "Test when the length of input list is too long",
+        "Test with a float in input list",
+        "Test with a string in input list",
+        "Test with a @ in input list",
+        "Test with a large number in the list",
+        "Test with a minus number in the list"
+    ])
+
+    def test_negitive_case(self, solution: Solution, input_prices: list[int], expect_ErrorType: Exception, expect_ErrorMsg: str):
+        with pytest.raises(Exception) as exacInfo:
+            solution.maxProfit(input_prices)
+        assert exacInfo.type == expect_ErrorType
+        assert expect_ErrorMsg in str(exacInfo)
+
+class TestBestTimeToBuyAndSellStock_OutputValidation:
+
+    @pytest.mark.parametrize("OutputCheck_func, FailReason",[
+        (lambda out: isinstance(out, int), "Output is not a integer!"),
+        (lambda out: out >= 0, "Output should be larger than 0!"),
+        (lambda out: out <= 10000, "Output should be smaller than 10000!"),
+        (lambda out: out == 4, "Output is not correct!")
+    ], ids = [
+        "Test if the output is a integer",
+        "Test if the output is larger than 0",
+        "Test if the output is smaller than 10000",
+        "Test if the output is correct"
+    ])
+
+    def test_output_validation(self, solution: Solution, OutputCheck_func, FailReason):
+        input_prices = [3, 1, 4, 2, 5]
+        output = solution.maxProfit(input_prices)
+        assert OutputCheck_func(output), f"fail reason: {FailReason}"
