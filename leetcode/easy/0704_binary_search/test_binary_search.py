@@ -32,7 +32,7 @@ list_10000 = list(range(1, 10001))
         ([1], 10, -1)
     ], ids = [
         "Target at right edge",
-        "Target is negitive and at left edge",
+        "Target is negative and at left edge",
         "Target is 9999",
         "Input list has 10000 items",
         "Only 1 item in list",
@@ -48,7 +48,7 @@ list_10001 = list(range(10001))
     "inputList, target, ErrorType, ErrorMsg", [
         ([], 1, ValueError, "list is empty"),
         ([0]*10, 0, ValueError, "list is not unique"),
-        (list_10001, 0, ValueError, "list length is larger than 10001"),
+        (list_10001, 0, ValueError, "list length is larger than 10000"),
         ([10001], 10001, ValueError, "number in list is larger than 10^4"),
         ([0,1], 10001, ValueError, "target is larger than 10^4"),
         ([-10001], -10001, ValueError, "number in list is smaller than -10^4"),
@@ -59,7 +59,7 @@ list_10001 = list(range(10001))
         ([0], "a", TypeError, "target is not integer")
     ]
 )
-def test_binarysearch_negitive(solution, inputList, target, ErrorType, ErrorMsg):
+def test_binarysearch_negative(solution, inputList, target, ErrorType, ErrorMsg):
     with pytest.raises(Exception) as exacInfo:
         solution.search(inputList, target)
     assert exacInfo.type == ErrorType
