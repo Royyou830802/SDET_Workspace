@@ -1,0 +1,50 @@
+# Drill：How would you stress test an audio codec / amplifier IC?
+
+- **日期**：2026-11-03（建立，尚未作答）
+- **題目來源**：question_bank A1｜Cirrus Logic 面試真題變形
+- **情境**：Panel / Technical
+- **計時**：10 分鐘
+
+> 原始面試回饋：*"gave a good overview of how he'd test and identified the importance of logging in a way that results could be identified while post processing the data."*
+> → L5 有被肯定，這次目標是把 L1、L4、L6 補起來
+
+---
+
+## 1. 第一版回答（限時，寫完不修改）
+
+<!-- 用講的方式寫，不要整理得太漂亮，模擬面試現場 -->
+
+---
+
+## 2. 自評：六層 Checklist
+
+| 層 | 檢查問題 | 有講到嗎 | 分數 (0~3) |
+|---|---|---|---|
+| L1 Risk | 有先問「會怎麼壞、對誰影響最大」嗎？ | | |
+| L2 Strategy | 有把 risk 對應到 test type，並說明取捨嗎？ | | |
+| L3 Test Design | 有用具體 technique 產生 case 嗎？ | | |
+| L4 Oracle | 有說 pass/fail 怎麼訂、依據是什麼嗎？ | | |
+| L5 Execution | 有提到環境、observability、可重現性嗎？ | | |
+| L6 Decision | 有說結果怎麼回報、怎麼影響決策嗎？ | | |
+
+> 0 沒提到｜1 只列項目｜2 有具體做法｜3 具體做法 + 判斷依據與取捨
+
+**有先 clarify 題目嗎？** ☐ 是 ☐ 否
+
+---
+
+## 3. 回饋（Mock 追問與建議）
+
+<!-- 面試官可能的追問、自己沒想到的點 -->
+
+---
+
+## 4. 改寫版回答
+
+<!-- 依六層結構重寫，可附英文版 -->
+
+---
+
+## 5. 下次要記得的一件事
+
+>

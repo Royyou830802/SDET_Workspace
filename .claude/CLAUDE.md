@@ -24,6 +24,11 @@ interview/
   log_parser/               # Mini project: log parsing exercise
   sensor_cleaning/          # Mini project: sensor data cleaning exercise
 automation/                 # SDET automation framework (WIP)
+sqa/                        # SQA skill learning: 6-layer test framework (L1 Risk ~ L6 Decision)
+  concepts/                 # Notes per layer + glossary
+  drills/                   # "How would you test X" drills (question_bank, _template, dated answers)
+  case_studies/             # Full test strategies from real experience (GNSS TTFF, power)
+  reading/                  # Reading list and book notes
 docs/                       # Notes and documentation
 ```
 
